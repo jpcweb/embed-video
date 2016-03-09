@@ -10,19 +10,17 @@ function embed (url, opts) {
 
   id = detectVimeo(url)
   if (id) return embed.vimeo(id, opts)
-}
 
-embed.image = function (url, opts) {
-  var id
-
-  url = URL.parse(url, true)
-
-  id = detectYoutube(url)
-  if (id) return embed.youtube.image(id, opts)
+  id = detectDailymotion(url)
+  if (id) return embed.dailymotion(id, opts)
 }
 
 function detectVimeo (url) {
   return (url.hostname == "vimeo.com") ? url.pathname.split("/")[1] : null
+}
+
+function detectDailymotion (url) {
+  return (url.hostname == "www.dailymotion.com") ? url.pathname.split("/")[2] : null
 }
 
 function detectYoutube (url) {
@@ -38,37 +36,15 @@ function detectYoutube (url) {
 }
 
 embed.vimeo = function (id, opts) {
-  // TODO: use opts to set iframe attrs.
-  var queryString = ''
-  if (opts && opts.hasOwnProperty('query')){
-    queryString = "?" + serializeQuery(opts.query)
-  }
-  return '<iframe src="//player.vimeo.com/video/' + id + queryString + '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
+  return '<iframe width="100%" src="//player.vimeo.com/video/' + id + '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
+}
+
+embed.dailymotion = function (id, opts) {
+  return '<iframe width="100%" src="//www.dailymotion.com/embed/video/' + id + '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
 }
 
 embed.youtube = function (id, opts) {
-  // TODO: use opts to set iframe attrs.
-  var queryString = ''
-  if (opts && opts.hasOwnProperty('query')){
-    queryString = "?" + serializeQuery(opts.query)
-  }
-  return '<iframe src="//www.youtube.com/embed/' + id + queryString + '" frameborder="0" allowfullscreen></iframe>'
-}
-
-embed.youtube.image = function (id, opts) {
-  opts = opts || {}
-  opts.image = opts.image || 'default'
-  return '<img src="//img.youtube.com/vi/' + id + '/' + opts.image + '.jpg"/>'
-}
-
-function serializeQuery (query) {
-  var queryString = []
-  for(var p in query){
-    if (query.hasOwnProperty(p)) {
-      queryString.push(encodeURIComponent(p) + "=" + encodeURIComponent(query[p]));
-    }
-  }
-  return queryString.join("&")
+  return '<iframe width="100%" src="//www.youtube.com/embed/' + id + '" frameborder="0" allowfullscreen></iframe>'
 }
 
 module.exports = embed
